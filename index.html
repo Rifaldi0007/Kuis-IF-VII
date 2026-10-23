@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="id"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>CBT Informatika – Penyimpanan Primer &amp; Sekunder</title>
+<style>
+:root{--bg:#f4f7fb;--card:#fff;--tx:#1b2a41;--mu:#5b6b82;--pr:#2563eb;--bd:#d7e0ee;--ok:#16a34a;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1624;--card:#18223a;--tx:#e8eef9;--mu:#9fb0cc;--pr:#5b8cff;--bd:#2b3a5c}}
+:root[data-theme="dark"]{--bg:#0f1624;--card:#18223a;--tx:#e8eef9;--mu:#9fb0cc;--pr:#5b8cff;--bd:#2b3a5c}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.5 system-ui,Arial,sans-serif}
+.w{max-width:720px;margin:0 auto;padding:16px}
+.c{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:20px;margin-bottom:14px}
+h1{font-size:22px;margin:0 0 6px}p{color:var(--mu);margin:4px 0 12px}
+input{width:100%;padding:12px;border:1px solid var(--bd);border-radius:10px;font-size:16px;background:var(--bg);color:var(--tx);margin:6px 0 12px}
+button{background:var(--pr);color:#fff;border:0;border-radius:10px;padding:12px 20px;font-size:16px;cursor:pointer}
+button.s{background:transparent;color:var(--pr);border:1px solid var(--pr)}button:disabled{opacity:.4}
+.top{position:sticky;top:env(safe-area-inset-top,0px);background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;z-index:5}
+#tm{font-weight:700;font-variant-numeric:tabular-nums}#tm.lo{color:#dc2626}
+.lv{display:inline-block;font-size:12px;padding:2px 10px;border-radius:99px;background:var(--bg);border:1px solid var(--bd);color:var(--mu)}
+.o{display:block;width:100%;text-align:left;background:var(--bg);color:var(--tx);border:1px solid var(--bd);margin:8px 0}
+.o.on{border-color:var(--pr);background:var(--pr);color:#fff}
+.nav{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}.nav b{width:34px;height:34px;display:grid;place-items:center;border:1px solid var(--bd);border-radius:8px;font-size:13px;cursor:pointer}
+.nav b.d{background:var(--ok);color:#fff;border-color:var(--ok)}.nav b.cur{outline:2px solid var(--pr)}
+.im{text-align:center;margin:8px 0}.im svg{max-width:200px;height:auto}
+.row{display:flex;justify-content:space-between;gap:8px}.big{font-size:44px;font-weight:800;color:var(--pr)}
+canvas{max-width:100%;height:auto;border:1px solid var(--bd);border-radius:8px}
+</style></head><body><div class="w">
+
+<div id="p1" class="c"><h1>CBT Informatika Kelas 7</h1><p>Materi: Penyimpanan Primer &amp; Sekunder · 20 soal PG · 30 menit</p>
+<label>Nama lengkap</label><input id="nm" placeholder="Contoh: Siti Aminah" autocomplete="off">
+<label>Kelas</label><input id="kl" placeholder="Contoh: 7A" autocomplete="off">
+<button id="go">Mulai</button><p id="er" style="color:#dc2626"></p></div>
+
+<div id="p2" hidden>
+<div class="top"><span id="who"></span><span>Sisa waktu: <span id="tm">30:00</span></span></div>
+<div class="c"><div class="row"><b id="no"></b><span class="lv" id="lv"></span></div>
+<p id="qt" style="color:var(--tx);font-size:18px"></p><div class="im" id="im"></div><div id="ops"></div>
+<div class="row" style="margin-top:14px"><button class="s" id="pv">← Sebelumnya</button><button id="nx">Berikutnya →</button></div></div>
+<div class="c"><div class="nav" id="nv"></div><button id="end" style="background:#dc2626">End Test</button></div></div>
+
+<div id="p3" hidden><div class="c" style="text-align:center"><h1>Tes Selesai</h1><p id="rs"></p><div class="big" id="sc"></div><p id="dt"></p>
+<canvas id="cv" width="1000" height="700"></canvas><br><br><button id="dl">Unduh Sertifikat (PNG)</button></div></div>
+</div>
+<script>
+const S={
+ram:'<svg viewBox="0 0 200 90"><rect x="5" y="10" width="190" height="60" rx="4" fill="#16a34a"/><g fill="#111">'+[20,55,90,125].map(x=>`<rect x="${x}" y="22" width="25" height="22"/>`).join('')+'</g><g fill="#fbbf24">'+Array.from({length:18},(_,i)=>`<rect x="${12+i*10}" y="70" width="6" height="14"/>`).join('')+'</g></svg>',
+usb:'<svg viewBox="0 0 200 90"><rect x="10" y="25" width="50" height="40" fill="#cbd5e1" stroke="#64748b"/><rect x="60" y="15" width="120" height="60" rx="8" fill="#2563eb"/><rect x="25" y="35" width="25" height="8" fill="#334155"/><circle cx="160" cy="45" r="6" fill="#fbbf24"/></svg>',
+hdd:'<svg viewBox="0 0 200 120"><rect x="10" y="8" width="180" height="104" rx="8" fill="#94a3b8" stroke="#475569"/><circle cx="85" cy="58" r="40" fill="#e2e8f0" stroke="#475569"/><circle cx="85" cy="58" r="8" fill="#475569"/><path d="M160 20 L100 55" stroke="#1e293b" stroke-width="5"/></svg>',
+ssd:'<svg viewBox="0 0 200 120"><rect x="15" y="15" width="170" height="90" rx="8" fill="#334155"/><rect x="30" y="35" width="40" height="40" fill="#111" stroke="#94a3b8"/><rect x="80" y="35" width="40" height="40" fill="#111" stroke="#94a3b8"/><rect x="130" y="95" width="40" height="8" fill="#fbbf24"/><text x="30" y="92" fill="#e2e8f0" font-size="13">SATA</text></svg>',
+sd:'<svg viewBox="0 0 120 120"><rect x="30" y="15" width="60" height="90" rx="6" fill="#7c3aed"/><path d="M30 15 L30 50 L38 50 L38 15Z" fill="#a78bfa"/><g fill="#fbbf24">'+[40,50,60,70,80].map(x=>`<rect x="${x}" y="22" width="5" height="16"/>`).join('')+'</g></svg>'};
+const Q=[
+["Mudah","Memori utama komputer yang bersifat sementara dan langsung diakses CPU disebut ...",0,["Penyimpanan primer","Penyimpanan sekunder","Penyimpanan optik","Penyimpanan awan"]],
+["Mudah","Perhatikan gambar! Perangkat tersebut adalah ...","ram",["RAM","Flashdisk","Kartu memori","Hard disk"]],
+["Mudah","Perhatikan gambar! Perangkat tersebut adalah ...","usb",["Flashdisk","RAM","SSD","DVD"]],
+["Mudah","Manakah yang termasuk penyimpanan sekunder?",0,["Hard disk","RAM","Register","Cache"]],
+["Mudah","ROM bersifat non-volatile, artinya ...",0,["Data tetap tersimpan walau listrik mati","Data hilang saat listrik mati","Data hanya bisa dibaca CPU","Data tersimpan sementara"]],
+["Mudah","1 byte sama dengan ... bit.",0,["8","4","16","1024"]],
+["Sedang","Perhatikan gambar! Perangkat penyimpanan ini menyimpan data pada piringan yang berputar. Namanya ...","hdd",["HDD (Hard Disk Drive)","SSD","RAM","Kartu memori"]],
+["Sedang","RAM bersifat volatile, artinya ...",0,["Data hilang ketika daya listrik dimatikan","Data tersimpan permanen","Data tidak dapat diubah","Kapasitasnya sangat besar"]],
+["Sedang","Perbedaan utama penyimpanan primer dengan sekunder adalah ...",0,["Primer diakses langsung CPU dan cepat, sekunder berkapasitas besar dan permanen","Primer permanen, sekunder sementara","Primer lebih besar dari sekunder","Keduanya sama saja"]],
+["Sedang","Perhatikan gambar! Keunggulan perangkat ini dibanding HDD adalah ...","ssd",["Tanpa bagian bergerak sehingga lebih cepat dan tahan guncangan","Harganya lebih murah per GB","Menggunakan laser","Datanya hilang saat mati"]],
+["Sedang","Fungsi memori cache adalah ...",0,["Menyimpan data yang sering dipakai agar CPU bekerja lebih cepat","Menyimpan arsip foto","Mengganti hard disk","Menyalurkan listrik"]],
+["Sedang","CD dan DVD dibaca menggunakan teknologi ...",0,["Sinar laser (optik)","Magnetik","Tegangan listrik","Gelombang radio"]],
+["Sukar","Urutan penyimpanan dari yang tercepat ke yang terlambat adalah ...",0,["Register – Cache – RAM – Hard disk","Hard disk – RAM – Cache – Register","RAM – Register – Cache – Hard disk","Cache – Hard disk – RAM – Register"]],
+["Sukar","1 GB sama dengan ... MB.",0,["1.024","100","512","10.000"]],
+["Sukar","Perhatikan gambar! Perangkat ini lazim dipakai di HP dan kamera. Ia termasuk ...","sd",["Penyimpanan sekunder eksternal berbasis flash","Penyimpanan primer","Memori cache","Penyimpanan optik"]],
+["Sukar","Komputer menjadi lambat saat banyak aplikasi dibuka, padahal hard disk masih banyak kosong. Penyebab yang paling mungkin adalah ...",0,["RAM penuh","ROM rusak","Hard disk terlalu besar","Flashdisk tercabut"]],
+["HOTS","Dina membutuhkan laptop yang cepat menyala dan tahan guncangan karena sering dibawa bepergian. Penyimpanan yang paling tepat adalah ...",0,["SSD","HDD","CD-ROM","Disket"]],
+["HOTS","Andi mengetik tugas, lalu listrik padam sebelum ia menekan Save. Tugas hilang karena ...",0,["Data masih berada di RAM dan belum dipindahkan ke penyimpanan sekunder","Data tersimpan di ROM","Hard disk rusak","Flashdisk penuh"]],
+["HOTS","Sekolah ingin mengarsipkan 2 TB foto kegiatan dengan biaya murah dan jarang dibuka. Pilihan terbaik adalah ...",0,["Hard disk eksternal","RAM tambahan","Cache prosesor","Register"]],
+["HOTS","RAM ibarat meja kerja dan hard disk ibarat lemari arsip. Mengapa meja kerja (RAM) kapasitasnya lebih kecil tetapi tetap dipakai?",0,["Karena akses sangat cepat untuk data yang sedang diproses, tetapi mahal per GB","Karena RAM menyimpan data selamanya","Karena RAM lebih murah dari hard disk","Karena RAM tidak terhubung ke CPU"]]];
+const $=i=>document.getElementById(i),sh=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+let L,A,cur,T,iv,nm,kl,done=0;
+$('go').onclick=()=>{nm=$('nm').value.trim();kl=$('kl').value.trim();if(!nm||!kl){$('er').textContent='Isi nama dan kelas terlebih dahulu.';return}
+L=Q.map(q=>({l:q[0],q:q[1],i:q[2],c:q[3][0],o:sh(q[3])}));A=Array(20).fill(null);cur=0;T=1800;
+$('p1').hidden=true;$('p2').hidden=false;$('who').textContent=nm+' · '+kl;
+$('nv').innerHTML=L.map((_,i)=>`<b onclick="show(${i})">${i+1}</b>`).join('');show(0);
+iv=setInterval(()=>{T--;const m=String(T/60|0).padStart(2,'0'),s=String(T%60).padStart(2,'0');$('tm').textContent=m+':'+s;$('tm').className=T<=300?'lo':'';if(T<=0)fin()},1000)};
+function show(i){cur=i;const q=L[i];$('no').textContent='Soal '+(i+1)+' dari 20';$('lv').textContent=q.l;$('qt').textContent=q.q;$('im').innerHTML=q.i?S[q.i]:'';
+$('ops').innerHTML=q.o.map((t,k)=>`<button class="o ${A[i]===k?'on':''}" onclick="pick(${k})">${'ABCD'[k]}. ${t}</button>`).join('');
+$('pv').disabled=i==0;$('nx').disabled=i==19;[...$('nv').children].forEach((b,k)=>b.className=(A[k]!==null?'d ':'')+(k==i?'cur':''))}
+function pick(k){A[cur]=k;show(cur)}
+$('pv').onclick=()=>show(cur-1);$('nx').onclick=()=>show(cur+1);
+$('end').onclick=()=>{const n=A.filter(a=>a===null).length;if(confirm(n?`Masih ada ${n} soal belum dijawab. Akhiri tes?`:'Akhiri tes sekarang?'))fin()};
+function fin(){if(done)return;done=1;clearInterval(iv);let b=0;L.forEach((q,i)=>{if(A[i]!==null&&q.o[A[i]]===q.c)b++});const sc=b*5;
+$('p2').hidden=true;$('p3').hidden=false;$('sc').textContent=sc;$('rs').textContent=`${nm} (${kl}) menjawab benar ${b} dari 20 soal.`;
+const d=new Date().toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'});$('dt').textContent=d;cert(nm,kl,sc,b,d)}
+function cert(n,k,sc,b,d){const c=$('cv'),x=c.getContext('2d');x.fillStyle='#fffdf5';x.fillRect(0,0,1000,700);
+x.strokeStyle='#2563eb';x.lineWidth=10;x.strokeRect(25,25,950,650);x.strokeStyle='#fbbf24';x.lineWidth=3;x.strokeRect(45,45,910,610);
+x.textAlign='center';x.fillStyle='#1b2a41';x.font='bold 54px Georgia,serif';x.fillText('SERTIFIKAT HASIL TES',500,140);
+x.font='22px Georgia,serif';x.fillText('Informatika Kelas 7 · Penyimpanan Primer & Sekunder',500,185);
+x.fillText('Diberikan kepada:',500,260);x.fillStyle='#2563eb';x.font='bold 46px Georgia,serif';x.fillText(n,500,330);
+x.fillStyle='#1b2a41';x.font='26px Georgia,serif';x.fillText('Kelas '+k,500,375);
+x.font='bold 90px Georgia,serif';x.fillStyle=sc>=75?'#16a34a':'#d97706';x.fillText(String(sc),500,500);
+x.fillStyle='#1b2a41';x.font='22px Georgia,serif';x.fillText(`Jawaban benar ${b} dari 20 soal`,500,545);x.fillText(d,500,620)}
+$('dl').onclick=()=>{const a=document.createElement('a');a.download='Sertifikat-'+nm.replace(/\s+/g,'_')+'.png';a.href=$('cv').toDataURL('image/png');a.click()};
+</script></body></html>
